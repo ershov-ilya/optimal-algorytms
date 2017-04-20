@@ -10,7 +10,7 @@
  * Конструктор представляет собой вычислительный процесс
  * Объект создаваемый конструтором будет содержать результат расчёта
  */ 
- function floorSearch(options, verbose=false){
+ function lastFloor(options, verbose=false){
     this.steps=0
     this.correct=true
     this.result=false
@@ -27,6 +27,8 @@
     
     // Stage 1 - у нас есть запасные стеклянные шары
     let balls=this.options.balls, bottom=1, top=options.floors, test_floor
+
+    if(verbose) console.log('Stage 1: '+bottom+'-'+top)
     while(balls>1){
         
         test_floor=Math.round((top-bottom)*options.fraction)
@@ -75,7 +77,7 @@
     } catch(obj){
         
     }
-    
+    if(verbose) console.log('Результат', this.result, "этаж")
  }
  
  /**
@@ -93,11 +95,11 @@
     //console.log('fraction', options.fraction)
     
   
-     // Считаем максимум итераций  всех вариантов этажей
+     // Ищем максимум итераций всех вариантов этажей
      max_steps=0, max_res=null
      for(i=1; i<options.floors; i++){
         options.last_good_floor=i
-        res=new floorSearch(options)
+        res=new lastFloor(options)
         if(!res.correct) console.log(res, res.correct)
         
         
@@ -120,9 +122,10 @@ console.log('effective_frac', effective_frac)
 console.log('effective_steps', effective_steps)
 console.log('effective_res', effective_res)
 
-console.log('==========================')
-console.log('Прогон самого эффективного')
+console.log('=========================================7')
+console.log('Прогон опции с самым эффективным делением|')
+console.log('но с максимальным количеством шагов      |')
 options=Object.assign({},effective_res.options)
-res=new floorSearch(options,true)
+res=new lastFloor(options,true)
  
   
