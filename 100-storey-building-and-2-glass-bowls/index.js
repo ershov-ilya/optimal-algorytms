@@ -77,25 +77,43 @@
  /**
  * Процесс
  */
- let i, res, options, max_steps
- 
+ let i, frac, res, options, max_steps, effective_frac, effective_steps=null
+ options=Object.assign({},defaultOptions)
 
- // Считаем максимум итераций  всех вариантов этажей
- options=Object.assign({},defaultOptions), max_steps=0, max_res=null
- for(i=1; i<options.floors; i++){
-    options.last_good_floor=i
-    res=new findFloor(options)
-    if(!res.correct) console.log(res, res.correct)
+ 
+ // Ищем самую эффективную дробь (фракцию) для деления
+ frac=0.99
+ effective_frac=frac
+ while(frac>0 && frac<1){
+    options.fraction=frac
+    //console.log('fraction', options.fraction)
     
-    
-    if((res.steps>max_steps) && res.correct==true){
-        max_steps=res.steps
-        max_res=res
-    }
+  
+     // Считаем максимум итераций  всех вариантов этажей
+     max_steps=0, max_res=null
+     for(i=1; i<options.floors; i++){
+        options.last_good_floor=i
+        res=new findFloor(options)
+        if(!res.correct) console.log(res, res.correct)
+        
+        
+        if((res.steps>max_steps) && res.correct==true){
+            max_steps=res.steps
+            max_res=res
+        }
+     }
+     //console.log('max_steps:', max_steps)
+     if(effective_steps==null || max_steps<effective_steps){
+         effective_steps=max_steps
+         effective_frac=frac
+     }
+
+    frac-=0.001
  }
- console.log('max_steps:', max_steps)
-
  
+console.log('effective_frac', effective_frac)
+console.log('effective_steps', effective_steps)
+
  /*
   options=Object.assign({},defaultOptions)
   options.last_good_floor=49
