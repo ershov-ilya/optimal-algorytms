@@ -15,7 +15,7 @@
     this.correct=true
     this.result=false
     this.reason=''
-    this.options=options
+    this.options=Object.assign({},options)
     
     try{
     
@@ -55,6 +55,8 @@
         // Тестируем нижнюю границу, если шар цел, границу поднимаем
         if(bottom==top){
             this.result=bottom
+            if(DEBUG) console.log('Прерываем без броска, итак понятно')
+            //this.steps--
             throw null // Прерываем исполнение
         }
         // Кидаем шар (бьётся или нет?)
@@ -77,7 +79,7 @@
  /**
  * Процесс
  */
- let i, frac, res, options, max_steps, effective_frac, effective_steps=null
+ let i, frac, res, options, max_steps, effective_frac, effective_steps=null, effective_res=null
  options=Object.assign({},defaultOptions)
 
  
@@ -106,6 +108,7 @@
      if(effective_steps==null || max_steps<effective_steps){
          effective_steps=max_steps
          effective_frac=frac
+         effective_res=max_res
      }
 
     frac-=0.001
@@ -113,10 +116,10 @@
  
 console.log('effective_frac', effective_frac)
 console.log('effective_steps', effective_steps)
+console.log('effective_res', effective_res)
 
- /*
-  options=Object.assign({},defaultOptions)
-  options.last_good_floor=49
-  res=new findFloor(options,true)
- */
+console.log('Прогон самого эффективного')
+options=Object.assign({},effective_res.options)
+res=new findFloor(options,true)
+ 
   
