@@ -10,7 +10,7 @@
  * Конструктор представляет собой вычислительный процесс
  * Объект создаваемый конструтором будет содержать результат расчёта
  */ 
- function findFloor(options, DEBUG=false){
+ function floorSearch(options, verbose=false){
     this.steps=0
     this.correct=true
     this.result=false
@@ -28,42 +28,44 @@
     // Stage 1 - у нас есть запасные стеклянные шары
     let balls=this.options.balls, bottom=1, top=options.floors, test_floor
     while(balls>1){
-        this.steps++
         
-        test_floor=Math.floor((top-bottom)*options.fraction)
+        test_floor=Math.round((top-bottom)*options.fraction)
         if(test_floor==0) test_floor=1
         test_floor+=bottom
-        if(DEBUG) console.log('test_floor', test_floor)
         
+        if(bottom>=options.floors) throw null // Достигли верха диапазона на 1 этапе
+
         // Кидаем шар (бьётся или нет?)
+        if(verbose) console.log('Кидаем шар, этаж', test_floor)
+        this.steps++
         if(test_floor>options.last_good_floor){
             balls--
-            if(DEBUG) console.log('Разбился шар')
+            if(verbose) console.log('Шар разбился')
             top=test_floor-1
         }else{
             bottom=test_floor
         }
-        if(bottom>=options.floors) throw null // Достигли верха диапазона на 1 этапе
     }
     
-    if(DEBUG) console.log('Stage 2: '+bottom+'-'+top)
+    if(verbose) console.log('Stage 2: '+bottom+'-'+top)
     
     // Stage 2 - у нас последний стеклянный шар
     while(balls>0){
-        this.steps++
-        if(DEBUG) console.log('test_floor', bottom)
         // Тестируем нижнюю границу, если шар цел, границу поднимаем
         if(bottom==top){
             this.result=bottom
-            if(DEBUG) console.log('Прерываем без броска, итак понятно')
+            if(verbose) console.log('Прерываем без броска, итак понятно, этаж '+this.result)
             //this.steps--
             throw null // Прерываем исполнение
         }
+
         // Кидаем шар (бьётся или нет?)
+        this.steps++
+        if(verbose) console.log('Кидаем шар, этаж', bottom)
         if(bottom>options.last_good_floor){
             balls--
             this.result=bottom-1
-            if(DEBUG) console.log('Разбился шар')
+            if(verbose) console.log('Шар разбился')
         }else{
             bottom++
         }
@@ -95,7 +97,7 @@
      max_steps=0, max_res=null
      for(i=1; i<options.floors; i++){
         options.last_good_floor=i
-        res=new findFloor(options)
+        res=new floorSearch(options)
         if(!res.correct) console.log(res, res.correct)
         
         
@@ -118,8 +120,9 @@ console.log('effective_frac', effective_frac)
 console.log('effective_steps', effective_steps)
 console.log('effective_res', effective_res)
 
+console.log('==========================')
 console.log('Прогон самого эффективного')
 options=Object.assign({},effective_res.options)
-res=new findFloor(options,true)
+res=new floorSearch(options,true)
  
   
